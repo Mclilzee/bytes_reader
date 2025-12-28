@@ -43,6 +43,15 @@ impl<'a> ByteReader<'a> {
         Ok(n)
     }
 
+    pub fn read_u16_le(&mut self) -> Result<u16> {
+        let size = size_of::<u16>();
+        self.has_space(size)?;
+        let bytes = &self.buffer[self.cursor..self.cursor + size];
+        let n = u16::from_le_bytes([bytes[0], bytes[1]]);
+        self.cursor += size;
+        Ok(n)
+    }
+
     pub fn read_u32_be(&mut self) -> Result<u32> {
         let size = size_of::<u32>();
         self.has_space(size)?;
@@ -101,14 +110,15 @@ impl<'a> ByteReader<'a> {
         self.buffer.len()
     }
 
-    pub fn get_buffer(&mut self, n: usize) -> Result<&[u8]> {
+    pub fn read_block(&mut self, n: usize) -> Result<&[u8]> {
         self.has_space(n)?;
         let v = &self.buffer[self.cursor..self.cursor + n];
         self.cursor += n;
         Ok(v)
     }
 
-    pub fn get_buffer_at(&self, position: usize, length: usize) -> Result<&[u8]> {
+    /// Does not advance the cursor
+    pub fn get_block_at(&self, position: usize, length: usize) -> Result<&[u8]> {
         if position + length > self.buffer.len() {
             bail!(
                 "Position: {position}, and Length: {length}, exceeds the buffer size {}",
@@ -117,6 +127,21 @@ impl<'a> ByteReader<'a> {
         }
 
         Ok(&self.buffer[position..position + length])
+    }
+
+    pub fn rewind(&mut self, n: usize) -> Result<()> {
+        if n < self.cursor {
+            bail!(
+                "Rewinding by n: {n}, will put the cursor position in negative value. If you want to reset cursor position use `reader.reset()` instead"
+            );
+        }
+
+        self.cursor -= n;
+        Ok(())
+    }
+
+    pub fn reset(&mut self) {
+        self.cursor = 0;
     }
 
     fn has_space(&self, length: usize) -> Result<()> {
