@@ -144,6 +144,22 @@ impl<'a> ByteReader<'a> {
         self.cursor = 0;
     }
 
+    pub fn get_position(&self) -> usize {
+        self.cursor
+    }
+
+    pub fn set_position(&mut self, n: usize) -> Result<()> {
+        if n >= self.buffer.len() {
+            bail!(
+                "Position n: {n}, is outside the buffer bounds of length {}",
+                self.buffer.len()
+            );
+        }
+
+        self.cursor = n;
+        Ok(())
+    }
+
     fn has_space(&self, length: usize) -> Result<()> {
         if self.cursor + length > self.buffer.len() {
             bail!(
