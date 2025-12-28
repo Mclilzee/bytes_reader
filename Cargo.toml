@@ -2,6 +2,15 @@
 name = "bytes_reader"
 version = "0.1.0"
 edition = "2024"
+authors = ["Emad Ali"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/Mclilzee/bytes_reader"
+homepage = "https://github.com/Mclilzee/bytes_reader"
+keywords = ["bytes", "buffer", "cursor", "reader"]
+description = """
+Read bytes using a buffer and automatically tracked cursor
+"""
 
 [dependencies]
 anyhow = "1.0.100"
