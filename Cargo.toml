@@ -11,6 +11,7 @@ keywords = ["bytes", "buffer", "cursor", "reader"]
 description = """
 Read bytes using a buffer and automatically tracked cursor
 """
+rust-version = "1.92.0"
 
 [dependencies]
 anyhow = "1.0.100"
